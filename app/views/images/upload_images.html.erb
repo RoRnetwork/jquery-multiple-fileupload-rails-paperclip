@@ -1,0 +1,250 @@
+<div class="container">
+  <h2>Upload file</h2>
+  <%= form_for Image.new, url: create_images_images_path, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
+    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+    <div class="fileupload-buttonbar">
+
+          <%= f.file_field :image, multiple: true %>
+
+        <button type="submit" class="start">
+
+          <span>Upload</span>
+        </button>
+        <button type="reset" class="cancel">
+
+          <span>Reset</span>
+        </button>
+
+      <li class="button"><%= link_to 'Back', images_path,:class=>"buttonLink backButton" %></li>
+
+    </div>
+
+    <!-- The table listing the files available for upload/download -->
+    <table ><tbody class="files"></tbody>
+    </table>
+  <% end %>
+<input type="text" id="shan"name="" value="" placeholder="">
+</div>
+<script>
+  var fileUploadErrors = {
+  maxFileSize: 'File is too big',
+  minFileSize: 'File is too small',
+  acceptFileTypes: 'Filetype not allowed',
+  maxNumberOfFiles: 'Max number of files exceeded',
+  uploadedBytes: 'Uploaded bytes exceed file size',
+  emptyResult: 'Empty file upload result'
+  };
+</script>
+
+<!-- The template to display files available for upload -->
+<script id="template-upload" type="text/x-tmpl">
+
+
+  {% for (var i=0, file; file=o.files[i]; i++) { %}
+  <tr class="template-upload">
+    <td class="preview"><span class="fade"></span></td>
+    <td class="name"><span>{%=file.name%}</span></td>
+
+    <td class="image_name" id="image_name"><span><input type="text" name="image[name]"value="{%= file.name.split('/').pop().split('.').shift()%}" /></span></td>
+    <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
+    {% if (file.error) { %}
+    <td class="error" colspan="2"><span class="label label-important">{%=locale.fileupload.error%}</span> {%=locale.fileupload.errors[file.error] || file.error%}</td>
+    {% } else if (o.files.valid && !i) { %}
+    <td>
+
+    </td>
+    <td class="start">{% if (!o.options.autoUpload) { %}
+      <button>
+
+        <span>{%="Upload"%}</span>
+      </button>
+      {% } %}</td>
+    {% } else { %}
+    <td colspan="2"></td>
+    {% } %}
+    <td class="cancel">{% if (!i) { %}
+      <button >
+
+        <span>{%="Remove"%}</span>
+      </button>
+      {% } %}</td>
+  </tr>
+  {% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+
+    <tr class="template-download fade">
+
+    </tr>
+
+</script>
+
+<script type="text/javascript" charset="utf-8">
+
+
+
+  $(function () {
+      var maxTotalFilesSizeLimit = 5000000;
+      var maxTotalFilesSize = 0;
+      //alert(maxTotalFilesSizeLimit)
+      $('#image_image').attr('name', 'image[image]');
+
+      // Initialize the jQuery File Upload widget:
+      $('#fileupload').fileupload(
+        { 
+          acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i, //png
+          maxFileSize:10000000 //10 MB
+          //maxNumberOfFiles: 10
+
+            // add: function (e, result) {
+            //     // Here you can access properties like:
+            //      var type = result.files[0].type;
+            //      var size = result.files[0].size;
+
+            // }
+
+        }
+        );
+
+      $('#fileupload')
+      .bind('fileuploadadd', function (e, data) {/* ... */
+
+        $.each(data.files, function (index, file) {
+          maxTotalFilesSize = maxTotalFilesSize + file.size
+          console.log (file.name);
+           if(maxTotalFilesSize >= maxTotalFilesSizeLimit)
+            {
+              alert("limit reached")
+            }
+           // alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        });
+
+      document.getElementById("shan").value = maxTotalFilesSize;
+
+
+      })
+      .bind('fileuploadsubmit', function (e, data) {/* ... */
+
+
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      })
+      .bind('fileuploadsend', function (e, data) {/* ... */
+        //alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'No of Records : ' + data.file.length );
+        // $.each(data.files, function (index, file) {
+        //   maxTotalFilesSize = maxTotalFilesSize + file.size
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+        // document.getElementById("shan").value = maxTotalFilesSize;
+
+      })
+      .bind('fileuploaddone', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //   maxTotalFilesSize = maxTotalFilesSize - file.size
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+        // document.getElementById("shan").value = maxTotalFilesSize;
+      })
+      .bind('fileuploadfail', function (e, data) {/* ... */
+        // alert(data.files[data.index].error);
+        // $.each(data.files, function (index, file) {
+        //   maxTotalFilesSize = maxTotalFilesSize - file.size
+        //     alert('fileuploadfail' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+      document.getElementById("shan").value = maxTotalFilesSize;
+     
+      })
+      .bind('fileuploadalways', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+      })
+      .bind('fileuploadprogress', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+      })
+      .bind('fileuploadstart', function (e) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      })
+      .bind('fileuploadstop', function (e) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      })
+      .bind('fileuploadchange', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      })
+      .bind('fileuploadpaste', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      })
+      .bind('fileuploaddrop', function (e, data) {/* ... */
+        // $.each(data.files, function (index, file) {
+        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        // });
+
+
+      });
+      //   $('#fileupload')
+      //   .bind('fileuploadsubmit', function (e, data) {
+      //      $.each(data.files, function (index, file) {
+      //           alert('File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+      //       });
+
+      //   })
+      //   .bind('fileuploadsend', function (e, data) {
+      //     $.each(data.files, function (index, file) {
+      //           alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+      //       });
+
+      //   })
+      //   .bind('fileuploaddone', function (e, data) {
+      //     $.each(data.files, function (index, file) {
+      //           alert('fileuploaddone' +'\n'+"=====Minus=========="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+      //       });
+
+      //   })
+      //   .bind('fileuploadfail', function (e, data) {
+      //     $.each(data.files, function (index, file) {
+      //           alert('fileuploadfail' +'\n'+"=======Minus========"+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+      //       });
+      // //
+      // Load existing files:
+      // $.getJSON($('#fileupload').prop('action'), function (files) {
+      //   var fu = $('#fileupload').data('blueimpFileupload'),
+      //     template;
+      //   fu._adjustMaxNumberOfFiles(-files.length);
+      //   console.log(files);
+      //   template = fu._renderDownload(files)
+      //     .appendTo($('#fileupload .files'));
+      //   // Force reflow:
+      //   fu._reflow = fu._transition && template.length &&
+      //     template[0].offsetWidth;
+      //   template.addClass('in');
+      //   $('#loading').remove();
+      // });
+ // Load existing files:
+
+
+  });
+</script>

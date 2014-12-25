@@ -1,6 +1,14 @@
 JqueryFileuploadRailsExample::Application.routes.draw do
+  resources :images do
+    collection do
+        get 'upload_images'
+        post 'create_images'
+    end
+  end
+
+
   resources :uploads
-  root :to => 'uploads#index'
+  root :to => 'images#upload_images'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
