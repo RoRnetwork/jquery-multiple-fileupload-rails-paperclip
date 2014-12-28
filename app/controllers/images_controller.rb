@@ -48,7 +48,7 @@ class ImagesController < ApplicationController
         #format.json { render json: @image, status: :created, location: @image }
       else
         format.html { render action: "new" }
-        format.json { render json: @image.errors, status: :unprocessable_entity }
+        #format.json { render json: @image.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -81,7 +81,7 @@ class ImagesController < ApplicationController
     end
   end
   def upload_images
-    
+      @image = Image.new
   end
   def create_images
     @image = Image.new(params[:image])
@@ -91,8 +91,9 @@ class ImagesController < ApplicationController
         format.html { redirect_to upload_images_images_path(@image), notice: 'Image was successfully created.' }
         #format.json { render json: @image, status: :created, location: @image }
       else
+        
         format.html { redirect_to upload_images_images_path(@image.errors) }
-        format.json { render json: @image.errors, status: :unprocessable_entity }
+        format.json { render json: [{error: @image.errors}], status: 304 }
       end
     end
   end

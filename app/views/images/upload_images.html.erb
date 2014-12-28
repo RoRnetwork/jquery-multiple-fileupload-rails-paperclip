@@ -1,24 +1,19 @@
 <div class="container">
   <h2>Upload file</h2>
-  <%= form_for Image.new, url: create_images_images_path, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
+
+
+  <%= form_for @image, url: create_images_images_path, :html => { :multipart => true, :id => "fileupload"  } do |f| %>
     <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
     <div class="fileupload-buttonbar">
-
           <%= f.file_field :image, multiple: true %>
-
         <button type="submit" class="start">
-
           <span>Upload</span>
         </button>
         <button type="reset" class="cancel">
-
           <span>Reset</span>
         </button>
-
       <li class="button"><%= link_to 'Back', images_path,:class=>"buttonLink backButton" %></li>
-
     </div>
-
     <!-- The table listing the files available for upload/download -->
     <table ><tbody class="files"></tbody>
     </table>
@@ -38,14 +33,12 @@
 
 <!-- The template to display files available for upload -->
 <script id="template-upload" type="text/x-tmpl">
-
-
   {% for (var i=0, file; file=o.files[i]; i++) { %}
   <tr class="template-upload">
     <td class="preview"><span class="fade"></span></td>
     <td class="name"><span>{%=file.name%}</span></td>
 
-    <td class="image_name" id="image_name"><span><input type="text" name="image[name]"value="{%= file.name.split('/').pop().split('.').shift()%}" /></span></td>
+    <td class="image_name"><span><input type="text" name="image[name]"value="{%= file.name.split('/').pop().split('.').shift()%}" /></span></td>
     <td class="size"><span>{%=o.formatFileSize(file.size)%}</span></td>
     {% if (file.error) { %}
     <td class="error" colspan="2"><span class="label label-important">{%=locale.fileupload.error%}</span> {%=locale.fileupload.errors[file.error] || file.error%}</td>
@@ -73,17 +66,12 @@
 </script>
 <!-- The template to display files available for download -->
 <script id="template-download" type="text/x-tmpl">
-
-    <tr class="template-download fade">
-
-    </tr>
+    <div class="template-download fade">
+    </div>
 
 </script>
 
 <script type="text/javascript" charset="utf-8">
-
-
-
   $(function () {
       var maxTotalFilesSizeLimit = 5000000;
       var maxTotalFilesSize = 0;
@@ -121,55 +109,34 @@
         });
 
       document.getElementById("shan").value = maxTotalFilesSize;
-
-
       })
       .bind('fileuploadsubmit', function (e, data) {/* ... */
-
+        var inputs = data.context.find(':input');
+        if (inputs.filter('[required][value=""]').first().focus().length) {
+            return false;
+        }
+        data.formData = inputs.serializeArray();
 
         // $.each(data.files, function (index, file) {
-        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
+        //     $.each(file, function(key, element) {
+        //         alert('key: ' + key + '\n' + 'value: ' + element);
+        //     });
         // });
 
 
-      })
-      .bind('fileuploadsend', function (e, data) {/* ... */
-        //alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'No of Records : ' + data.file.length );
-        // $.each(data.files, function (index, file) {
-        //   maxTotalFilesSize = maxTotalFilesSize + file.size
-        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-        // });
-        // document.getElementById("shan").value = maxTotalFilesSize;
-
-      })
-      .bind('fileuploaddone', function (e, data) {/* ... */
-        // $.each(data.files, function (index, file) {
-        //   maxTotalFilesSize = maxTotalFilesSize - file.size
-        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-        // });
-        // document.getElementById("shan").value = maxTotalFilesSize;
       })
       .bind('fileuploadfail', function (e, data) {/* ... */
         // alert(data.files[data.index].error);
-        // $.each(data.files, function (index, file) {
-        //   maxTotalFilesSize = maxTotalFilesSize - file.size
-        //     alert('fileuploadfail' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-        // });
+        //location.reload();
+        $.each(data.files, function (index, file) {
+          maxTotalFilesSize = maxTotalFilesSize - file.size
+            //alert('fileuploadfail' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size+ '\n' + 'Error: ' + file.error);
+        });
+        
       document.getElementById("shan").value = maxTotalFilesSize;
      
       })
-      .bind('fileuploadalways', function (e, data) {/* ... */
-        // $.each(data.files, function (index, file) {
-        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-        // });
 
-      })
-      .bind('fileuploadprogress', function (e, data) {/* ... */
-        // $.each(data.files, function (index, file) {
-        //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-        // });
-
-      })
       .bind('fileuploadstart', function (e) {/* ... */
         // $.each(data.files, function (index, file) {
         //     alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
@@ -205,29 +172,7 @@
 
 
       });
-      //   $('#fileupload')
-      //   .bind('fileuploadsubmit', function (e, data) {
-      //      $.each(data.files, function (index, file) {
-      //           alert('File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-      //       });
-
-      //   })
-      //   .bind('fileuploadsend', function (e, data) {
-      //     $.each(data.files, function (index, file) {
-      //           alert('fileuploadsend' +'\n'+"==============="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-      //       });
-
-      //   })
-      //   .bind('fileuploaddone', function (e, data) {
-      //     $.each(data.files, function (index, file) {
-      //           alert('fileuploaddone' +'\n'+"=====Minus=========="+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-      //       });
-
-      //   })
-      //   .bind('fileuploadfail', function (e, data) {
-      //     $.each(data.files, function (index, file) {
-      //           alert('fileuploadfail' +'\n'+"=======Minus========"+ '\n' + 'File Name: ' + file.name + '\n' + 'File Size: ' + file.size);
-      //       });
+      
       // //
       // Load existing files:
       // $.getJSON($('#fileupload').prop('action'), function (files) {
@@ -243,8 +188,10 @@
       //   template.addClass('in');
       //   $('#loading').remove();
       // });
- // Load existing files:
 
+//$.each(file, function(key, element) {
+      // alert('key: ' + key + '\n' + 'value: ' + element);
+  //});
 
   });
 </script>
